@@ -20,7 +20,7 @@ on:
 #  GKE_KEY: ${{ secrets.GKE_KEY }}
 
 jobs:
-  changes:
+  detect-changes:
     runs-on: ubuntu-latest
     outputs:
       # Expose matched filters as job 'variants' output variable
@@ -28,26 +28,24 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - uses: dorny/paths-filter@v2
+      # https://github.com/marketplace/actions/paths-changes-filter#conditional-execution
       id: filter
-      # TODO: use IMAGE_ROOT
       with:
         filters: |
-          base: singleuser/base/**
-          scientific: singleuser/python3-scientific/**
-          r: singleuser/r/**
-          summa: singleuser/python3-summa/**
-          wrfhydro: singluser/python3-wrfhydro/**
-          csdms: singleuser/csdms-tools/**
+          base: ${{ env.IMAGE_ROOT }}/base/**
+          scientific: ${{ env.IMAGE_ROOT }}/python3-scientific/**
+          r: ${{ env.IMAGE_ROOT }}/r/**
+          summa: ${{ env.IMAGE_ROOT }}/python3-summa/**
+          wrfhydro: ${{ env.IMAGE_ROOT }}/python3-wrfhydro/**
+          csdms: ${{ env.IMAGE_ROOT }}/csdms-tools/**
   setup-build-publish-deploy:
-    needs: changes
+    needs: detect-changes
     name: Setup, Build, and Publish
     runs-on: ubuntu-latest
-    # TODO: remove continue on error
-    continue-on-error: true
     strategy:
       max-parallel: 6
       matrix:
-        IMAGE_VARIANT: ${{ fromJSON(needs.changes.outputs.image_variants) }}
+        IMAGE_VARIANT: ${{ fromJSON(needs.detect-changes.outputs.image_variants) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
