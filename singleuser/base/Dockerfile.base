@@ -3,7 +3,6 @@
 ARG BASE_VERSION
 FROM jupyterhub/singleuser:$BASE_VERSION
 
-# TODO: maintainer deprecated, use LABEL
 MAINTAINER Tony Castronova <acastronova@cuahsi.org>
 
 USER root
