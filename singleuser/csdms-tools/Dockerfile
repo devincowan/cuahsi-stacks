@@ -4,7 +4,7 @@ FROM cuahsi/singleuser-base:$BASE_VERSION
 USER $NB_UID
 
 ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
-# 
+
 # pymt
 RUN mamba install -y \
 --channel conda-forge \
