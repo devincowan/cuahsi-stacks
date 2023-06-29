@@ -31,7 +31,7 @@ jobs:
         uses: actions/checkout@v3
       - name: List Folders
         run: |
-          git diff --dirstat=files,0 HEAD~1 ${{ env.IMAGE_ROOT }}
+          git diff --dirstat=files,0 HEAD~1 -- ${{ env.IMAGE_ROOT }}
 
           
       - name: Check paths
