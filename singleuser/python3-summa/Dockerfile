@@ -1,6 +1,6 @@
 ARG BASE_VERSION
 FROM cuahsi/singleuser-base:$BASE_VERSION
-
+# ${GITHUB_REF}
 USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
