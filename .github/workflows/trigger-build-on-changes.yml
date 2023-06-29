@@ -13,8 +13,9 @@ env:
 
 on:
   push:
-    paths:
-      - "singleuser/**"
+    # paths:
+    #   - "${{ env.IMAGE_ROOT }}/**"
+    #   - "singleuser/**"
 
 # Environment variables available to all jobs and steps in this workflow
 #  GKE_KEY: ${{ secrets.GKE_KEY }}
@@ -26,18 +27,26 @@ jobs:
       # Expose matched filters as job 'variants' output variable
       image_variants: ${{ steps.filter.outputs.changes }}
     steps:
-    - uses: actions/checkout@v3
-    - uses: dorny/paths-filter@v2
-      # https://github.com/marketplace/actions/paths-changes-filter#conditional-execution
-      id: filter
-      with:
-        filters: |
-          base: ${{ env.IMAGE_ROOT }}/base/**
-          scientific: ${{ env.IMAGE_ROOT }}/python3-scientific/**
-          r: ${{ env.IMAGE_ROOT }}/r/**
-          summa: ${{ env.IMAGE_ROOT }}/python3-summa/**
-          wrfhydro: ${{ env.IMAGE_ROOT }}/python3-wrfhydro/**
-          csdms: ${{ env.IMAGE_ROOT }}/csdms-tools/**
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: List Folders
+        run: |
+          git diff --dirstat=files,0 HEAD~1 ${{ env.IMAGE_ROOT }}
+
+          
+      - name: Check paths
+        uses: dorny/paths-filter@v2
+        # https://github.com/marketplace/actions/paths-changes-filter#conditional-execution
+        id: filter
+        # TODO: get a list of all dirs in IMAGE_ROOT and use it to populate this list
+        with:
+          filters: |
+            base: ${{ env.IMAGE_ROOT }}/base/**
+            scientific: ${{ env.IMAGE_ROOT }}/python3-scientific/**
+            r: ${{ env.IMAGE_ROOT }}/r/**
+            summa: ${{ env.IMAGE_ROOT }}/python3-summa/**
+            wrfhydro: ${{ env.IMAGE_ROOT }}/python3-wrfhydro/**
+            csdms: ${{ env.IMAGE_ROOT }}/csdms-tools/**
   setup-build-publish-deploy:
     needs: detect-changes
     name: Setup, Build, and Publish
