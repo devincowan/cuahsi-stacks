@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+          with:
+          fetch-depth: 2
       - name: List Folders
         run: |
           git diff --dirstat=files,0 HEAD~1 -- ${{ env.IMAGE_ROOT }}
